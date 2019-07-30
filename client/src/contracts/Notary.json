@@ -1,0 +1,177 @@
+[
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_hash",
+        "type": "string"
+      },
+      {
+        "name": "_desc",
+        "type": "string"
+      }
+    ],
+    "name": "addNotaryEntry",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_ipfsHash",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "_timeStamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "NotaryAdded",
+    "type": "event"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "files",
+    "outputs": [
+      {
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "name": "hash",
+        "type": "string"
+      },
+      {
+        "name": "setBy",
+        "type": "address"
+      },
+      {
+        "name": "isSet",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "getAPersonFiles",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getFilesCount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "",
+        "type": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "personFiles",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "viewNotaryEntry",
+    "outputs": [
+      {
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "name": "_desc",
+        "type": "string"
+      },
+      {
+        "name": "_hash",
+        "type": "string"
+      },
+      {
+        "name": "_timeStamp",
+        "type": "uint256"
+      },
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
