@@ -15,7 +15,11 @@ class App extends Component {
     account: "",
     notary: {},
     filesArr: [],
-    filesObjects: []
+    filesObjects: [],
+    eventNotaryAdded: {},
+    fileId: null,
+    success: false,
+    fileAvailable: false
   };
 
   async componentDidMount() {
@@ -27,7 +31,7 @@ class App extends Component {
         .getFilesCount()
         .call({ from: accounts[0] });
       this.setState({ total });
-      this.getFileById(1);
+      //this.getFileById(1);
       this.getPersonAllFiles("0x890575aee83e2b50869b3917a77a5578b86b0e98");
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -63,6 +67,22 @@ class App extends Component {
           .then(r => {
             this.setState({ ipfshash: "", fileDescription: "" });
           });
+
+        contractInstance.events
+          .NotaryAdded((error, event) => {})
+          .on("data", event => {
+            this.setState({
+              eventNotaryAdded: {
+                id: event.returnValues.id,
+                owner: event.returnValues._owner,
+                ipfsHash: event.returnValues._ipfsHash,
+                timestamp: event.returnValues._timeStamp
+              }
+            });
+            this.setState({ success: true });
+            console.log(this.state.eventNotaryAdded);
+          })
+          .on("error", console.log(error));
       } catch (error) {
         console.log(error);
       }
@@ -73,26 +93,30 @@ class App extends Component {
     this.setState({ fileDescription: event.target.value });
   };
 
-  getFileById(id) {
-    const total = this.state.total;
-    for (var i = 0; i < total; i++) {
-      contractInstance.methods
-        .viewNotaryEntry(id)
-        .call()
-        .then(result => {
-          var jsonNotary = {
-            id: result[0],
-            description: result[1],
-            hash: result[2],
-            timeStamp: result[3],
-            owner: result[4]
-          };
-          this.setState({ notary: jsonNotary });
-          // console.log(this.state.notary);
-          return jsonNotary;
-        });
-    }
-  }
+  updateFileId = event => {
+    this.setState({ fileId: event.target.value });
+  };
+
+  getFileById = () => {
+    const fileId = this.state.fileId;
+
+    contractInstance.methods
+      .viewNotaryEntry(fileId)
+      .call()
+      .then(result => {
+        var jsonNotary = {
+          fileId: result[0],
+          description: result[1],
+          hash: result[2],
+          timeStamp: result[3],
+          fileOwner: result[4]
+        };
+        this.setState({ notary: jsonNotary });
+        this.setState({ fileAvailable: true });
+        // console.log(this.state.notary);
+        //return jsonNotary;
+      });
+  };
 
   getPersonAllFiles(address) {
     contractInstance.methods
@@ -116,24 +140,107 @@ class App extends Component {
   }
 
   render() {
+    const { id, owner, ipfsHash, timestamp } = this.state.eventNotaryAdded;
+    const {
+      fileId,
+      description,
+      hash,
+      timeStamp,
+      fileOwner
+    } = this.state.notary;
+
     return (
-      <div className="App">
-        <h1>IPTHEREUM Proof Of Existence</h1>
-        {/* <br />
-        <img src={`https://ipfs.io/ipfs/${this.state.ipfshash}`} alt="" /> */}
+      <div className="container ">
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <br />
+            <h2>IPTHEREUM File Storage (POE)</h2>
+
+            <br />
+          </div>
+        </div>
+
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <br />
+            <h4>Get File Details</h4>
+
+            <br />
+
+            <div className="form-group">
+              <label htmlFor="exampleFormControlFile1">File ID</label>
+              <input
+                className="form-control form-control-sm"
+                onChange={this.updateFileId}
+                type="text"
+                placeholder="Enter File Id"
+              />
+            </div>
+            <button className="btn btn-primary" onClick={this.getFileById}>
+              {" "}
+              Get File Info
+            </button>
+          </div>
+        </div>
         <br />
-        <h2>Upload A File</h2>
-        <h5>
-          This App uploads your file to IPFS and store it hash on the ethereum
-          blockchain
-        </h5>
-        <form onSubmit={this.onSubmit}>
-          <label> Select Your File </label>{" "}
-          <input type="file" onChange={this.captureFile} />
-          <label>File Description</label>{" "}
-          <textarea onChange={this.updateDescription} />
-          <input type="submit" />
-        </form>
+        <hr />
+        <div>
+          {this.state.fileAvailable ? (
+            <div className="row justify-content-center">
+              <div className="col-md-6">
+                <h4> File Full Details</h4>
+                <p> File ID: {fileId} </p>
+                <p> Owner: {fileOwner} </p>
+                <p> Description: {description} </p>
+                <p>IPFS Hash: {hash}</p>
+                <p> Date Upoaded: {timeStamp} </p>
+              </div>
+            </div>
+          ) : null}
+          <hr />
+        </div>
+        <div className="row justify-content-center">
+          {this.state.success ? (
+            <div className="col-md-6">
+              <div className="alert alert-success" role="alert">
+                Your file was successfully saved to the ethereum blockchain,
+                here is your file details: File Id: {id}, File Owner Address:{" "}
+                {owner}, IPFS Hash: {ipfsHash}, Timestamp: {timestamp}
+              </div>
+            </div>
+          ) : null}
+        </div>
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <br />
+            <h2> UPLOAD A FILE TO IPTHEREUM</h2>
+
+            <br />
+          </div>
+          <div className="col-md-8">
+            <form onSubmit={this.onSubmit}>
+              <label htmlFor="exampleFormControlFile1"> Choose File</label>
+              <input
+                type="file"
+                className="form-control-file"
+                onChange={this.captureFile}
+                id="exampleFormControlFile1"
+              />
+              <div className="form-group">
+                <label htmlFor="exampleFormControlTextarea1">
+                  File Description
+                </label>
+                <textarea
+                  className="form-control"
+                  id="exampleFormControlTextarea1"
+                  onChange={this.updateDescription}
+                  rows="3"
+                />
+              </div>
+              <input type="submit" className="btn btn-primary" />
+            </form>
+          </div>
+        </div>
       </div>
     );
   }
