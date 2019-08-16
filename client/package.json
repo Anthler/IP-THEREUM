@@ -1,9 +1,10 @@
 {
   "name": "client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "10.3.0"
+    "node": "10.3.0",
+    "npm": "6.4.1"
   },
   "dependencies": {
     "@babel/core": "^7.5.5",
@@ -27,12 +28,10 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "last 2 Chrome versions"
     ],
     "development": [
-      "last 1 chrome version",
+      "last 2 Chrome versions",
       "last 1 firefox version",
       "last 1 safari version"
     ]
