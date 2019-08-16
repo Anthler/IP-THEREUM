@@ -7,11 +7,9 @@ import "./App.css";
 
 class App extends Component {
   state = {
-    storageValue: 0,
-    web3: null,
     buffer: null,
     fileDescription: "",
-    total: 0,
+
     account: "",
     notary: {},
     filesArr: [],
@@ -26,16 +24,7 @@ class App extends Component {
     try {
       const accounts = await web3.eth.getAccounts();
       this.setState({ account: accounts[0] });
-
-      const total = await contractInstance.methods
-        .getFilesCount()
-        .call({ from: accounts[0] });
-      this.setState({ total });
-      //this.getFileById(1);
-      this.getPersonAllFiles("0x890575aee83e2b50869b3917a77a5578b86b0e98");
     } catch (error) {
-      // Catch any errors for any of the above operations.
-
       console.error(error);
     }
   }
@@ -80,11 +69,12 @@ class App extends Component {
               }
             });
             this.setState({ success: true });
-            console.log(this.state.eventNotaryAdded);
           })
-          .on("error", console.log(error));
+          .on("error", error => {
+            console.log(error);
+          });
       } catch (error) {
-        console.log(error);
+        //console.log(error);
       }
     });
   };
@@ -113,8 +103,6 @@ class App extends Component {
         };
         this.setState({ notary: jsonNotary });
         this.setState({ fileAvailable: true });
-        // console.log(this.state.notary);
-        //return jsonNotary;
       });
   };
 
@@ -133,7 +121,6 @@ class App extends Component {
               this.setState({
                 filesObjects: [...this.state.filesObjects, fileObject]
               });
-              console.log(this.state.filesObjects);
             });
         }
       });
@@ -150,11 +137,11 @@ class App extends Component {
     } = this.state.notary;
 
     return (
-      <div className="container ">
+      <div className="container d-flex flex-column ">
         <div className="row justify-content-center">
           <div className="col-md-6">
             <br />
-            <h2>IPTHEREUM File Storage (POE)</h2>
+            <h2>IPTHEREUM NOTARY (PoE)</h2>
 
             <br />
           </div>
@@ -193,7 +180,7 @@ class App extends Component {
                 <p> Owner: {fileOwner} </p>
                 <p> Description: {description} </p>
                 <p>IPFS Hash: {hash}</p>
-                <p> Date Upoaded: {timeStamp} </p>
+                <p> Date Uploaded: {timeStamp} </p>
               </div>
             </div>
           ) : null}
